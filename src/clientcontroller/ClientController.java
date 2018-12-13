@@ -1,18 +1,13 @@
 package clientcontroller;
 
-import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-
-import org.pushingpixels.substance.api.skin.SubstanceRavenLookAndFeel;
-
 import clientgui.ClientFrame;
 import clientremote.RMIServiceLocator;
-import data.dto.ReservaDTO;
+import data.dto.CreditcardDTO;
+import data.dto.PaypalDTO;
 import data.dto.VueloDTO;
 
 public class ClientController {
@@ -21,21 +16,11 @@ public class ClientController {
 
 	public ClientController(String[] args) throws RemoteException {
 
-		this.rsl = new RMIServiceLocator();
-		this.rsl.setService(args);
+		this.rsl = new RMIServiceLocator(args);
 
 		// EDT para ajustar el tema propio al JFrame creado para el cliente:
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					UIManager.setLookAndFeel((LookAndFeel) new SubstanceRavenLookAndFeel());
-					ClientFrame frame = new ClientFrame(525, 325, ClientController.this);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
+		ClientFrame frame = new ClientFrame(525, 325, ClientController.this);
+		frame.setVisible(true);
 	}
 
 	public boolean registerUser(String nombre, String email, String sistemaAutentificacion) throws RemoteException {
@@ -60,17 +45,55 @@ public class ClientController {
 		return dev;
 	}
 
-	public boolean realizarReserva(ReservaDTO reservaARealizar, int nPlazas, String[] pasajeros)
-			throws RemoteException {
+	public boolean realizarReserva(VueloDTO vuelo, int nPlazas, String[] pasajeros) throws RemoteException {
 		boolean dev = false;
 		try {
-			dev = this.rsl.getVueloService().realizarReserva(reservaARealizar, nPlazas, pasajeros);
+			dev = this.rsl.getVueloService().realizarReserva(vuelo, nPlazas, pasajeros);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return dev;
 	}
+
+	public boolean realizarPagoPaypal(PaypalDTO paypalOrigen, PaypalDTO paypalDestino, double importe, String concepto)
+			throws RemoteException {
+		boolean dev = false;
+		try {
+			dev = this.rsl.getPagoService().realizarPagoPaypal(paypalOrigen, paypalDestino, importe, concepto);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dev;
+	}
+
+	public boolean realizarPagoCreditCard(CreditcardDTO creditcardOrigen, CreditcardDTO creditcardDestino,
+			double importe, String concepto) throws RemoteException {
+		boolean dev = false;
+		try {
+			dev = this.rsl.getPagoService().realizarPagoCreditCard(creditcardOrigen, creditcardDestino, importe,
+					concepto);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dev;
+	}
+
+	// public boolean realizarReserva(ReservaDTO reservaARealizar, int nPlazas,
+	// String[] pasajeros)
+	// throws RemoteException {
+	// boolean dev = false;
+	// try {
+	// dev = this.rsl.getVueloService().realizarReserva(reservaARealizar, nPlazas,
+	// pasajeros);
+	// } catch (RemoteException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return dev;
+	// }
 
 	public List<VueloDTO> buscarVuelos(String origen, String destino, int nPlazas) throws RemoteException {
 		List<VueloDTO> vuelos = new ArrayList<>();
