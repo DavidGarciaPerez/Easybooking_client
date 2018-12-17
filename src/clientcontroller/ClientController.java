@@ -21,6 +21,7 @@ public class ClientController {
 		// EDT para ajustar el tema propio al JFrame creado para el cliente:
 		ClientFrame frame = new ClientFrame(525, 325, ClientController.this);
 		frame.setVisible(true);
+		frame.cargarPanelIniciarSesion();
 	}
 
 	public boolean registerUser(String nombre, String email, String sistemaAutentificacion) throws RemoteException {

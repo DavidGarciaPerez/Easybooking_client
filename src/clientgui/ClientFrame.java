@@ -9,7 +9,7 @@ import javax.swing.border.LineBorder;
 
 import clientcontroller.ClientController;
 
-public class ClientFrame extends JFrame{
+public class ClientFrame extends JFrame {
 
 	/**
 	 * 
@@ -20,18 +20,19 @@ public class ClientFrame extends JFrame{
 	private int anchura;
 	private int altura;
 	private PanelIniciarSesion panelIniciarSesion;
-	private ClientController client;
-	
+	public PanelUsuario panelUsuario;
+	private ClientController controller;
+
 	/**
 	 * Create the frame.
 	 */
-	public ClientFrame(int anchura, int altura, ClientController cliente) {
+	public ClientFrame(int anchura, int altura, ClientController controller) {
 
 		// Antes de llamar a los métodos debemos asignar la anchura y altura al
 		// JFrame:
 		this.anchura = anchura;
 		this.altura = altura;
-		this.client = cliente;
+		this.controller = controller;
 
 		inicializar();
 		componentes();
@@ -40,7 +41,7 @@ public class ClientFrame extends JFrame{
 	}
 
 	private void inicializar() {
-		panelIniciarSesion = new PanelIniciarSesion();
+		panelIniciarSesion = new PanelIniciarSesion(this, this.controller);
 		contentPane = new JPanel();
 		contenedorDePaneles = new JScrollPane();
 	}
@@ -70,6 +71,23 @@ public class ClientFrame extends JFrame{
 
 	private void eventos() {
 
+	}
+
+	// Método para cargar el panel de iniciar sesión en el scrollPane del JFrame
+	// VentanaPrincipal:
+	public void cargarPanelIniciarSesion() {
+		// Cargamos el panel en el scrollPane: contenedorDePaneles
+		contenedorDePaneles.setViewportView(panelIniciarSesion);
+	}
+
+	// Método para cargar el panel del usuario:
+	public void cargarPanelUsuario() {
+		// Inicializamos el panel:
+		panelUsuario = new PanelUsuario(this.controller);
+		// Cargamos el panel en el scrollPane: contenedorDePaneles
+		contenedorDePaneles.setViewportView(panelUsuario);
+		// Mostraremos todo cuando haya cargado:
+		this.setVisible(true);
 	}
 
 }
