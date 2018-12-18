@@ -23,7 +23,7 @@ public class PanelIniciarSesion extends JPanel {
 	private static final long serialVersionUID = 1L;
 	int anchuraPanel = 500;
 	int alturaPanel = 300;
-	private JTextField textField;
+	private JTextField txtDavidgpopendeustoes;
 	private JButton BotonAcceder;
 	private ClientController controller; // Pasamos collector desde el "ClientFrame"
 	private JRadioButton rdbtnConectaseConFacebook;
@@ -42,7 +42,7 @@ public class PanelIniciarSesion extends JPanel {
 	}
 
 	private void inicializar() {
-		textField = new JTextField();
+		txtDavidgpopendeustoes = new JTextField();
 		BotonAcceder = new JButton("ACCEDER");
 		rdbtnConectarseConGoogle = new JRadioButton("CONECTARSE CON GOOGLE");
 		rdbtnConectaseConFacebook = new JRadioButton("CONECTASE CON FACEBOOK");
@@ -50,18 +50,19 @@ public class PanelIniciarSesion extends JPanel {
 
 	private void componentes() {
 
-		textField.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		textField.setColumns(10);
-		textField.setBounds(71, 29, 361, 60);
+		txtDavidgpopendeustoes.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		txtDavidgpopendeustoes.setColumns(10);
+		txtDavidgpopendeustoes.setBounds(71, 29, 361, 60);
+		txtDavidgpopendeustoes.setText("david.g.p@opendeusto.es");
 		BotonAcceder.setForeground(SystemColor.textHighlight);
 		BotonAcceder.setFont(new Font("Tahoma", Font.BOLD, 20));
 		BotonAcceder.setBackground(Color.DARK_GRAY);
 		BotonAcceder.setBounds(154, 252, 193, 35);
-		textField.setBackground(Color.DARK_GRAY);
-		textField.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Introduzca email",
-				TitledBorder.CENTER, TitledBorder.TOP, null, SystemColor.textHighlight));
+		txtDavidgpopendeustoes.setBackground(Color.DARK_GRAY);
+		txtDavidgpopendeustoes.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
+				"Introduzca email", TitledBorder.CENTER, TitledBorder.TOP, null, SystemColor.textHighlight));
 		BotonAcceder.setBorder(new LineBorder(SystemColor.textHighlight, 2));
-		textField.setForeground(SystemColor.textHighlight);
+		txtDavidgpopendeustoes.setForeground(SystemColor.textHighlight);
 		rdbtnConectarseConGoogle.setBounds(154, 114, 211, 25);
 		rdbtnConectaseConFacebook.setBounds(154, 144, 211, 25);
 	}
@@ -71,7 +72,7 @@ public class PanelIniciarSesion extends JPanel {
 		setBackground(Color.DARK_GRAY);
 		setLayout(null);
 		setBorder(null);
-		add(textField);
+		add(txtDavidgpopendeustoes);
 		add(BotonAcceder);
 		add(rdbtnConectarseConGoogle);
 		add(rdbtnConectaseConFacebook);
@@ -107,7 +108,7 @@ public class PanelIniciarSesion extends JPanel {
 	}
 
 	private boolean comprobarCredenciales() {
-		String usuario = textField.getText();
+		String usuario = txtDavidgpopendeustoes.getText();
 		boolean dev = false;
 
 		if (usuario.equals("")) {
@@ -115,7 +116,7 @@ public class PanelIniciarSesion extends JPanel {
 					JOptionPane.ERROR_MESSAGE);
 		} else {
 			try {
-				if (controller.login(textField.getText(), sistemaAutentificacion)) {
+				if (controller.login(txtDavidgpopendeustoes.getText(), sistemaAutentificacion)) {
 					// Si está todo bien ya podemos acceder al panel principal:
 					dev = true;
 				} else {

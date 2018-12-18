@@ -35,6 +35,7 @@ public class PanelUsuario extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ClientController controller;
+	private ClientFrame frame;
 	private JComboBox<Integer> comboBoxNumPlazas;
 	private JComboBox<String> comboBoxDestino;
 	private JComboBox<String> comboBoxOrigen;
@@ -55,7 +56,10 @@ public class PanelUsuario extends JPanel {
 	// Guardamos la lista siempre para poder luego buscar el vuelo a reservar!
 	private List<VueloDTO> VUELOS;
 	// Para guardar la lista de los vuelos que están siendo reservados:
-	private List<VueloDTO> VUELOS_RESERVA;
+	private List<VueloDTO> VUELOS_RESERVA = new ArrayList<VueloDTO>();
+	// Para guardar las plazas y los nombres;
+	private List<Integer> NUM_PLAZAS = new ArrayList<Integer>();
+	private List<String[]> PASAJEROS = new ArrayList<String[]>();
 
 	String[] ubicacionAeropuertos = { "Berlín", "Berlín", "Berlín", "Bremen", "Brunswick", "Colonia, Bonn", "Dortmund",
 			"Dresde", "Düsseldorf", "Weeze", "Erfurt", "Fráncfort del Meno", "Lautzenhausen", "Friedrichshafen",
@@ -63,8 +67,9 @@ public class PanelUsuario extends JPanel {
 			"Memmingerberg", "Münster, Osnabrück", "Erding", "Núremberg", "Paderborn, Lippstadt", "Rostock",
 			"Saarbrücken", "Stuttgart", "Sylt" };
 
-	public PanelUsuario(ClientController controller) {
+	public PanelUsuario(ClientFrame frame, ClientController controller) {
 		super();
+		this.frame = frame;
 		this.controller = controller;
 		this.inicializar();
 		this.componentes();
@@ -149,20 +154,41 @@ public class PanelUsuario extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				// Primero tenemos que obtener qué objeto VueloDTO está siendo seleccionado:
 				// Ahora podemos procesarlo para añadirlo a la tabla de abajo:
-				// anyadirVueloAListaVuelosReserva(VUELOS.get(tableVuelos.getSelectedRow()));
+				// Añadimos el vuelo si no está ya en la lista:
+				if (VUELOS_RESERVA.isEmpty() == false) {
+					boolean existe = false;
+					for (VueloDTO v : VUELOS_RESERVA) {
+						if (v.getNumVuelo() == VUELOS.get(tableVuelos.getSelectedRow()).getNumVuelo()) {
+							existe = true;
+							break;
+						}
+					}
+					if (existe) {
+						JOptionPane.showMessageDialog(null, "YA TIENES EL VUELO : "
+								+ VUELOS.get(tableVuelos.getSelectedRow()).getNumVuelo() + " EN LA TABLA DE RESERVAS",
+								"ERROR!", JOptionPane.ERROR_MESSAGE);
+					} else {
+						// Podemos guardar el vuelo:
+						anyadirVueloAListaVuelosReserva(VUELOS.get(tableVuelos.getSelectedRow()));
+					}
+				} else {
+					// No hace falta comprobar si existe porque no hay ninguno:
+					// Podemos guardar el vuelo:
+					anyadirVueloAListaVuelosReserva(VUELOS.get(tableVuelos.getSelectedRow()));
+				}
 			}
 		});
 		btnQuitarVueloDe.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Primero tenemos que obtener qué objeto VueloDTO está siendo seleccionado:
-				VueloDTO vueloSeleccionado = (VueloDTO) tableVuelosReserva
-						.getValueAt(tableVuelosReserva.getSelectedRow(), 9);
 				// Ahora podemos procesarlo para añadirlo a la tabla de abajo:
-				quitarVueloDeListaVuelosReserva(vueloSeleccionado);
+				quitarVueloDeListaVuelosReserva(VUELOS_RESERVA.get(tableVuelosReserva.getSelectedRow()));
 			}
 		});
 		btnReservarVuelosYa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Antes de realizar las reservas hay que pagar:
+				frame.cargarPanelPagos(VUELOS_RESERVA, NUM_PLAZAS, PASAJEROS);
 			}
 		});
 	}
@@ -198,7 +224,7 @@ public class PanelUsuario extends JPanel {
 								vuelo.getAeropuertoDestino().getUbicacion(), vuelo.getAeropuertoOrigen().getNombre(),
 								vuelo.getAeropuertoDestino().getNombre(), vuelo.getAerolinea().getNombreAerolinea(),
 								vuelo.getNumVuelo(), vuelo.getAsientosLibres(), vuelo.getHoraSalida(),
-								vuelo.getHoraLlegada()});
+								vuelo.getHoraLlegada() });
 					}
 					// Introducimos el modelo en la tabla:
 					tableVuelos.setModel(tableModel);
@@ -214,16 +240,27 @@ public class PanelUsuario extends JPanel {
 	// principal para
 	// luego realizar una reserva de varios vuelos:
 	private void anyadirVueloAListaVuelosReserva(VueloDTO vuelo) {
+		// Añadimos el vuelo:
 		this.VUELOS_RESERVA.add(vuelo);
+		// Añadimos las plazas del vuelo:
+		this.NUM_PLAZAS.add((Integer) this.comboBoxNumPlazas.getSelectedItem());
+		// Añadimos los pasajeros del vuelo:
+		// Creamos tantos pasajeros aleatorios como numero de plazas se ha reservado:
+		String[] pasajeros = new String[(Integer) this.comboBoxNumPlazas.getSelectedItem()];
+		for (int i = 0; i < (Integer) this.comboBoxNumPlazas.getSelectedItem(); i++) {
+			pasajeros[i] = "PASAJERO_" + (i + 1);
+		}
+		this.PASAJEROS.add(pasajeros);
 		// Actualizamos tabla:
 		actualizarTablaVuelosReserva();
 	}
 
 	private void quitarVueloDeListaVuelosReserva(VueloDTO vuelo) {
-		for (VueloDTO v : this.VUELOS_RESERVA) {
-			if (vuelo.getNumVuelo() == v.getNumAsientos()) {
+		for (int i = 0; i < this.VUELOS_RESERVA.size(); i++) {
+			if (vuelo.getNumVuelo() == VUELOS_RESERVA.get(i).getNumVuelo()) {
 				// Lo quitamos de la lista VUELOS_RESERVA:
-				this.VUELOS_RESERVA.remove(v);
+				this.VUELOS_RESERVA.remove(i);
+				break;
 			}
 		}
 		// Actualizamos tabla:
@@ -236,17 +273,15 @@ public class PanelUsuario extends JPanel {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				inicializarTablaModelReservasVuelos();
-				if (VUELOS_RESERVA.isEmpty() == false) {
-					for (VueloDTO vuelo : VUELOS_RESERVA) {
-						tableModelReservasVuelos.addRow(new Object[] { vuelo.getAeropuertoOrigen().getUbicacion(),
-								vuelo.getAeropuertoDestino().getUbicacion(), vuelo.getAeropuertoOrigen().getNombre(),
-								vuelo.getAeropuertoDestino().getNombre(), vuelo.getAerolinea().getNombreAerolinea(),
-								vuelo.getNumVuelo(), vuelo.getAsientosLibres(), vuelo.getHoraSalida(),
-								vuelo.getHoraLlegada(), vuelo });
-					}
-					// Introducimos el modelo en la tabla:
-					tableVuelosReserva.setModel(tableModelReservasVuelos);
+				for (VueloDTO vuelo : VUELOS_RESERVA) {
+					tableModelReservasVuelos.addRow(new Object[] { vuelo.getAeropuertoOrigen().getUbicacion(),
+							vuelo.getAeropuertoDestino().getUbicacion(), vuelo.getAeropuertoOrigen().getNombre(),
+							vuelo.getAeropuertoDestino().getNombre(), vuelo.getAerolinea().getNombreAerolinea(),
+							vuelo.getNumVuelo(), vuelo.getAsientosLibres(), vuelo.getHoraSalida(),
+							vuelo.getHoraLlegada() });
 				}
+				// Introducimos el modelo en la tabla:
+				tableVuelosReserva.setModel(tableModelReservasVuelos);
 			}
 		});
 	}

@@ -1,6 +1,7 @@
 package clientgui;
 
 import java.awt.Color;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -8,6 +9,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import clientcontroller.ClientController;
+import data.dto.VueloDTO;
 
 public class ClientFrame extends JFrame {
 
@@ -21,6 +23,7 @@ public class ClientFrame extends JFrame {
 	private int altura;
 	private PanelIniciarSesion panelIniciarSesion;
 	public PanelUsuario panelUsuario;
+	public PanelPago panelPago;
 	private ClientController controller;
 
 	/**
@@ -42,6 +45,7 @@ public class ClientFrame extends JFrame {
 
 	private void inicializar() {
 		panelIniciarSesion = new PanelIniciarSesion(this, this.controller);
+		panelUsuario = new PanelUsuario(this, this.controller);
 		contentPane = new JPanel();
 		contenedorDePaneles = new JScrollPane();
 	}
@@ -82,10 +86,17 @@ public class ClientFrame extends JFrame {
 
 	// Método para cargar el panel del usuario:
 	public void cargarPanelUsuario() {
-		// Inicializamos el panel:
-		panelUsuario = new PanelUsuario(this.controller);
 		// Cargamos el panel en el scrollPane: contenedorDePaneles
 		contenedorDePaneles.setViewportView(panelUsuario);
+		// Mostraremos todo cuando haya cargado:
+		this.setVisible(true);
+	}
+
+	// Método para cargar el panel de pagos:
+	public void cargarPanelPagos(List<VueloDTO> vuelosReserva, List<Integer> plazas, List<String[]> pasajeros) {
+		panelPago = new PanelPago(this, this.controller, vuelosReserva, plazas, pasajeros);
+		// Cargamos el panel en el scrollPane: contenedorDePaneles
+		contenedorDePaneles.setViewportView(panelPago);
 		// Mostraremos todo cuando haya cargado:
 		this.setVisible(true);
 	}
