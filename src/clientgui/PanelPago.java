@@ -1,24 +1,24 @@
 package clientgui;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import clientcontroller.ClientController;
-import clientgui.PanelUsuario.TableModel;
-import data.dto.VueloDTO;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JScrollPane;
-import javax.swing.JLabel;
-import java.awt.Font;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.awt.event.ActionEvent;
+
+import clientcontroller.ClientController;
+import data.dto.VueloDTO;
 
 public class PanelPago extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -96,6 +96,7 @@ public class PanelPago extends JPanel {
 	private void eventos() {
 		btnPagarConPaypal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				realizarReservas();
 			}
 		});
 		btnPagarConVisa.addActionListener(new ActionListener() {
@@ -115,7 +116,12 @@ public class PanelPago extends JPanel {
 		int i = 0;
 		for (VueloDTO vuelo : VUELOS_RESERVA) {
 			try {
-				controller.realizarReserva(vuelo, NUM_PLAZAS.get(i), PASAJEROS.get(i));
+				if (controller.realizarReserva(vuelo, NUM_PLAZAS.get(i), PASAJEROS.get(i))) {
+					JOptionPane.showMessageDialog(null, "LA RESERVA SE HA REALIZADO CON ÉXITO");
+				} else {
+					JOptionPane.showMessageDialog(null, "ERROR AL REALIZAR RESERVA", "ERROR RESERVA",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
