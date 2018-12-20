@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -18,6 +19,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 import clientcontroller.ClientController;
+import data.dto.CreditcardDTO;
+import data.dto.PagoDTO;
+import data.dto.PaypalDTO;
+import data.dto.ReservaDTO;
 import data.dto.VueloDTO;
 
 public class PanelPago extends JPanel {
@@ -38,6 +43,10 @@ public class PanelPago extends JPanel {
 	private JLabel lblTusReservasY;
 	private JButton btnCancelarReservas;
 	private TableModel tableModelReservasVuelos;
+	private PaypalDTO myPaypalAccount = new PaypalDTO("PAYPAL_ACCOUNT_1");
+	private PaypalDTO paypalAccountToPay = new PaypalDTO("PAYPAL_ACCOUNT_2");
+	private CreditcardDTO myCreditCard = new CreditcardDTO("4921561267849990", 123, new Date());
+	private CreditcardDTO creditCardToPay = new CreditcardDTO("4921561267849991", 345, new Date());
 
 	public PanelPago(ClientFrame frame, ClientController controller, List<VueloDTO> vuelosReserva, List<Integer> plazas,
 			List<String[]> pasajeros) {
@@ -96,11 +105,66 @@ public class PanelPago extends JPanel {
 	private void eventos() {
 		btnPagarConPaypal.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				realizarReservas();
+				for (int i = 0; i < VUELOS_RESERVA.size(); i++) {
+					try {
+						if (controller.realizarPagoPaypal(myPaypalAccount, paypalAccountToPay, NUM_PLAZAS.get(i) * 25,
+								"Reservando vuelo " + VUELOS_RESERVA.get(i).getNumVuelo() + " para " + NUM_PLAZAS.get(i)
+										+ " pasajeros, con un precio de : " + NUM_PLAZAS.get(i) * 25 + " EUROS")) {
+
+							// Si el pago ha ido bien porque tiene suficientes fondos entonces podemos
+							// realizar la reserva:
+							PagoDTO pago = new PagoDTO(myPaypalAccount, myCreditCard, NUM_PLAZAS.get(i) * 25,
+									"Reservando vuelo " + VUELOS_RESERVA.get(i).getNumVuelo() + " para "
+											+ NUM_PLAZAS.get(i) + " pasajeros, con un precio de : "
+											+ NUM_PLAZAS.get(i) * 25 + " EUROS");
+							ReservaDTO reserva = new ReservaDTO(NUM_PLAZAS.get(i) * 25,
+									String.valueOf(NUM_PLAZAS.get(i)), ClientFrame.getUser(), VUELOS_RESERVA.get(i),
+									pago);
+
+							controller.realizarReserva(reserva, NUM_PLAZAS.get(i), PASAJEROS.get(i));
+
+						} else {
+							JOptionPane.showMessageDialog(null, "¡SE HA RECHAZADO SU PAGO!", "PAYPAL ERROR",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
 			}
 		});
 		btnPagarConVisa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				for (int i = 0; i < VUELOS_RESERVA.size(); i++) {
+					try {
+						if (controller.realizarPagoCreditCard(myCreditCard, creditCardToPay, NUM_PLAZAS.get(i) * 25,
+								"Reservando vuelo " + VUELOS_RESERVA.get(i).getNumVuelo() + " para " + NUM_PLAZAS.get(i)
+										+ " pasajeros, con un precio de : " + NUM_PLAZAS.get(i) * 25 + " EUROS")) {
+
+							// Si el pago ha ido bien porque tiene suficientes fondos entonces podemos
+							// realizar la reserva:
+							PagoDTO pago = new PagoDTO(myPaypalAccount, myCreditCard, NUM_PLAZAS.get(i) * 25,
+									"Reservando vuelo " + VUELOS_RESERVA.get(i).getNumVuelo() + " para "
+											+ NUM_PLAZAS.get(i) + " pasajeros, con un precio de : "
+											+ NUM_PLAZAS.get(i) * 25 + " EUROS");
+							ReservaDTO reserva = new ReservaDTO(NUM_PLAZAS.get(i) * 25,
+									String.valueOf(NUM_PLAZAS.get(i)), ClientFrame.getUser(), VUELOS_RESERVA.get(i),
+									pago);
+
+							controller.realizarReserva(reserva, NUM_PLAZAS.get(i), PASAJEROS.get(i));
+
+						} else {
+							JOptionPane.showMessageDialog(null, "¡SE HA RECHAZADO SU PAGO!", "VISA ERROR",
+									JOptionPane.ERROR_MESSAGE);
+						}
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
 			}
 		});
 		btnCancelarReservas.addActionListener(new ActionListener() {
@@ -109,25 +173,6 @@ public class PanelPago extends JPanel {
 				frame.cargarPanelUsuario();
 			}
 		});
-	}
-
-	private void realizarReservas() {
-		// Por cada vuelo que hay en la lista hay que hacer una reserva:
-		int i = 0;
-		for (VueloDTO vuelo : VUELOS_RESERVA) {
-			try {
-				if (controller.realizarReserva(vuelo, NUM_PLAZAS.get(i), PASAJEROS.get(i))) {
-					JOptionPane.showMessageDialog(null, "LA RESERVA SE HA REALIZADO CON ÉXITO");
-				} else {
-					JOptionPane.showMessageDialog(null, "ERROR AL REALIZAR RESERVA", "ERROR RESERVA",
-							JOptionPane.ERROR_MESSAGE);
-				}
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			i++;
-		}
 	}
 
 	// Cada vez que se añade o se quite uno de los vuelos de la lista de vuelos

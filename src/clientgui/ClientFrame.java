@@ -9,6 +9,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import clientcontroller.ClientController;
+import data.Usuario;
+import data.dto.PaypalDTO;
+import data.dto.UsuarioDTO;
 import data.dto.VueloDTO;
 
 public class ClientFrame extends JFrame {
@@ -25,6 +28,7 @@ public class ClientFrame extends JFrame {
 	public PanelUsuario panelUsuario;
 	public PanelPago panelPago;
 	private ClientController controller;
+	private static UsuarioDTO user;
 
 	/**
 	 * Create the frame.
@@ -99,6 +103,14 @@ public class ClientFrame extends JFrame {
 		contenedorDePaneles.setViewportView(panelPago);
 		// Mostraremos todo cuando haya cargado:
 		this.setVisible(true);
+	}
+
+	public static UsuarioDTO getUser() {
+		return user;
+	}
+
+	public static void setUser(UsuarioDTO user) {
+		ClientFrame.user = user;
 	}
 
 }

@@ -8,6 +8,7 @@ import clientgui.ClientFrame;
 import clientremote.RMIServiceLocator;
 import data.dto.CreditcardDTO;
 import data.dto.PaypalDTO;
+import data.dto.ReservaDTO;
 import data.dto.VueloDTO;
 
 public class ClientController {
@@ -46,17 +47,6 @@ public class ClientController {
 		return dev;
 	}
 
-	public boolean realizarReserva(VueloDTO vuelo, int nPlazas, String[] pasajeros) throws RemoteException {
-		boolean dev = false;
-		try {
-			dev = this.rsl.getVueloService().realizarReserva(vuelo, nPlazas, pasajeros);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return dev;
-	}
-
 	public boolean realizarPagoPaypal(PaypalDTO paypalOrigen, PaypalDTO paypalDestino, double importe, String concepto)
 			throws RemoteException {
 		boolean dev = false;
@@ -82,19 +72,17 @@ public class ClientController {
 		return dev;
 	}
 
-	// public boolean realizarReserva(ReservaDTO reservaARealizar, int nPlazas,
-	// String[] pasajeros)
-	// throws RemoteException {
-	// boolean dev = false;
-	// try {
-	// dev = this.rsl.getVueloService().realizarReserva(reservaARealizar, nPlazas,
-	// pasajeros);
-	// } catch (RemoteException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return dev;
-	// }
+	public boolean realizarReserva(ReservaDTO reservaARealizar, int nPlazas, String[] pasajeros)
+			throws RemoteException {
+		boolean dev = false;
+		try {
+			dev = this.rsl.getVueloService().realizarReserva(reservaARealizar, nPlazas, pasajeros);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dev;
+	}
 
 	public List<VueloDTO> buscarVuelos(String origen, String destino, int nPlazas) throws RemoteException {
 		List<VueloDTO> vuelos = new ArrayList<>();
