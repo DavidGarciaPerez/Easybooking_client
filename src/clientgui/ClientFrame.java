@@ -9,8 +9,6 @@ import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
 
 import clientcontroller.ClientController;
-import data.Usuario;
-import data.dto.PaypalDTO;
 import data.dto.UsuarioDTO;
 import data.dto.VueloDTO;
 
@@ -20,15 +18,21 @@ public class ClientFrame extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private static UsuarioDTO user;
+	private static int fondosUsuario = 5000;
+
 	private JPanel contentPane;
+
 	private JScrollPane contenedorDePaneles;
+
 	private int anchura;
 	private int altura;
+
 	private PanelIniciarSesion panelIniciarSesion;
-	public PanelUsuario panelUsuario;
-	public PanelPago panelPago;
+	private PanelUsuario panelUsuario;
+	private PanelPago panelPago;
+
 	private ClientController controller;
-	private static UsuarioDTO user;
 
 	/**
 	 * Create the frame.
@@ -48,8 +52,6 @@ public class ClientFrame extends JFrame {
 	}
 
 	private void inicializar() {
-		panelIniciarSesion = new PanelIniciarSesion(this, this.controller);
-		panelUsuario = new PanelUsuario(this, this.controller);
 		contentPane = new JPanel();
 		contenedorDePaneles = new JScrollPane();
 	}
@@ -74,7 +76,6 @@ public class ClientFrame extends JFrame {
 
 		contentPane.setLayout(null);
 		contentPane.add(contenedorDePaneles);
-
 	}
 
 	private void eventos() {
@@ -84,12 +85,14 @@ public class ClientFrame extends JFrame {
 	// Método para cargar el panel de iniciar sesión en el scrollPane del JFrame
 	// VentanaPrincipal:
 	public void cargarPanelIniciarSesion() {
+		panelIniciarSesion = new PanelIniciarSesion(this, this.controller);
 		// Cargamos el panel en el scrollPane: contenedorDePaneles
 		contenedorDePaneles.setViewportView(panelIniciarSesion);
 	}
 
 	// Método para cargar el panel del usuario:
 	public void cargarPanelUsuario() {
+		panelUsuario = new PanelUsuario(this, this.controller);
 		// Cargamos el panel en el scrollPane: contenedorDePaneles
 		contenedorDePaneles.setViewportView(panelUsuario);
 		// Mostraremos todo cuando haya cargado:
@@ -111,6 +114,14 @@ public class ClientFrame extends JFrame {
 
 	public static void setUser(UsuarioDTO user) {
 		ClientFrame.user = user;
+	}
+
+	public static int getFondosUsuario() {
+		return fondosUsuario;
+	}
+
+	public static void setFondosUsuario(int fondosUsuario) {
+		ClientFrame.fondosUsuario = fondosUsuario;
 	}
 
 }

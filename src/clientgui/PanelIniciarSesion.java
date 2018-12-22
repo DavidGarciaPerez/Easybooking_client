@@ -17,19 +17,25 @@ import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
 import clientcontroller.ClientController;
-import data.Usuario;
 import data.dto.UsuarioDTO;
 import utiles.SwingWorkerProgress;
 
 public class PanelIniciarSesion extends JPanel {
 	private static final long serialVersionUID = 1L;
-	int anchuraPanel = 500;
-	int alturaPanel = 300;
+
+	private int anchuraPanel = 500;
+	private int alturaPanel = 300;
+	
+	private String sistemaAutentificacion = null;
+
 	private JTextField txtTextField;
+
 	private JButton BotonAcceder;
-	private ClientController controller; // Pasamos collector desde el "ClientFrame"
+
 	private JRadioButton rdbtnConectaseConFacebook;
 	private JRadioButton rdbtnConectarseConGoogle;
+
+	private ClientController controller; // Pasamos collector desde el "ClientFrame"
 
 	/**
 	 * Create the panel.
@@ -50,20 +56,21 @@ public class PanelIniciarSesion extends JPanel {
 	}
 
 	private void componentes() {
-
 		txtTextField.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		txtTextField.setColumns(10);
 		txtTextField.setBounds(71, 29, 361, 60);
 		txtTextField.setText("david.g.p@opendeusto.es");
+		txtTextField.setBackground(Color.DARK_GRAY);
+		txtTextField.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Introduzca email",
+				TitledBorder.CENTER, TitledBorder.TOP, null, SystemColor.textHighlight));
+		txtTextField.setForeground(SystemColor.textHighlight);
+
 		BotonAcceder.setForeground(SystemColor.textHighlight);
 		BotonAcceder.setFont(new Font("Tahoma", Font.BOLD, 20));
 		BotonAcceder.setBackground(Color.DARK_GRAY);
 		BotonAcceder.setBounds(154, 252, 193, 35);
-		txtTextField.setBackground(Color.DARK_GRAY);
-		txtTextField.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Introduzca email",
-				TitledBorder.CENTER, TitledBorder.TOP, null, SystemColor.textHighlight));
 		BotonAcceder.setBorder(new LineBorder(SystemColor.textHighlight, 2));
-		txtTextField.setForeground(SystemColor.textHighlight);
+
 		rdbtnConectarseConGoogle.setBounds(154, 114, 211, 25);
 		rdbtnConectaseConFacebook.setBounds(154, 144, 211, 25);
 	}
@@ -78,8 +85,6 @@ public class PanelIniciarSesion extends JPanel {
 		add(rdbtnConectarseConGoogle);
 		add(rdbtnConectaseConFacebook);
 	}
-
-	private String sistemaAutentificacion = null;
 
 	private void eventos(ClientFrame frame) {
 		BotonAcceder.addActionListener(new ActionListener() {

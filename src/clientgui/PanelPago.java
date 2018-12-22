@@ -35,16 +35,23 @@ public class PanelPago extends JPanel {
 	// Para guardar las plazas y los nombres;
 	private List<Integer> NUM_PLAZAS = new ArrayList<Integer>();
 	private List<String[]> PASAJEROS = new ArrayList<String[]>();
+
 	private JTable tableReservas;
+
 	private JScrollPane scrollPaneReservas;
+
 	private JButton btnPagarConVisa;
 	private JButton btnPagarConPaypal;
+	private JButton btnCancelarReservas;
+
 	private JLabel lblElijaElMtodo;
 	private JLabel lblTusReservasY;
-	private JButton btnCancelarReservas;
+
 	private TableModel tableModelReservasVuelos;
+
 	private PaypalDTO myPaypalAccount = new PaypalDTO("PAYPAL_ACCOUNT_1");
 	private PaypalDTO paypalAccountToPay = new PaypalDTO("PAYPAL_ACCOUNT_2");
+
 	private CreditcardDTO myCreditCard = new CreditcardDTO("4921561267849990", 123, new Date());
 	private CreditcardDTO creditCardToPay = new CreditcardDTO("4921561267849991", 345, new Date());
 

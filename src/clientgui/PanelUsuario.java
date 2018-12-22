@@ -1,32 +1,28 @@
 package clientgui;
 
 import java.awt.Color;
-
-import javax.swing.JPanel;
-
-import clientcontroller.ClientController;
-import data.dto.AerolineaDTO;
-import data.dto.AeropuertoDTO;
-import data.dto.VueloDTO;
-
-import javax.swing.JComboBox;
-import javax.sound.midi.Synthesizer;
-import javax.swing.JButton;
 import java.awt.Font;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.JScrollPane;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.awt.event.ActionEvent;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+import clientcontroller.ClientController;
+import data.dto.VueloDTO;
+import javax.swing.UIManager;
 
 public class PanelUsuario extends JPanel {
 
@@ -34,24 +30,45 @@ public class PanelUsuario extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ClientController controller;
-	private ClientFrame frame;
+
 	private JComboBox<Integer> comboBoxNumPlazas;
 	private JComboBox<String> comboBoxDestino;
 	private JComboBox<String> comboBoxOrigen;
-	private JTable tableVuelos;
-	private JScrollPane scrollPaneVuelos;
-	private JButton btnBuscarVuelos;
-	private JLabel lblEscojaUn;
+
+	private JTable tableVuelosRyanair;
 	private JTable tableVuelosReserva;
+	private JTable tableVuelosVueling;
+
+	private JScrollPane scrollPaneRyanair;
 	private JScrollPane scrollPaneVuelosReserva;
+	private JScrollPane scrollPaneVueling;
+
+	private JButton btnBuscarVuelos;
+	private JButton buttonAñadirVueloVueling;
+	private JButton btnQuitarVueloDe;
+	private JButton btnAñadirVueloRyanair;
+	private JButton btnReservarVuelosYa;
+	private JButton btnMostrarMisReservas;
+	private JButton btnQuitarTodosLos;
+
 	private JLabel lblTablaDeVuelos;
 	private JLabel lblEscojaUn_1;
-	private JButton btnQuitarVueloDe;
-	private JButton btnAadirVueloA;
-	private JButton btnReservarVuelosYa;
-	private TableModel tableModel;
+	private JLabel lblNombreDelUsuario;
+	private JLabel lblNombre;
+	private JLabel lblFondos;
+	private JLabel lblFondosActuales;
+	private JLabel lblTablaConMis;
+	private JLabel label;
+	private JLabel lblTablaDeVuelos_1;
+	private JLabel lblEscojaUn;
+
+	private TableModel tableModelRyanair;
+	private TableModel tableModelVueling;
 	private TableModel tableModelReservasVuelos;
+
+	private ClientController controller;
+
+	private ClientFrame frame;
 
 	// Guardamos la lista siempre para poder luego buscar el vuelo a reservar!
 	private List<VueloDTO> VUELOS;
@@ -82,38 +99,117 @@ public class PanelUsuario extends JPanel {
 		comboBoxOrigen = new JComboBox<String>();
 		comboBoxDestino = new JComboBox<String>();
 		comboBoxNumPlazas = new JComboBox<Integer>();
+
 		btnBuscarVuelos = new JButton("BUSCAR VUELOS");
-		tableVuelos = new JTable();
-		lblEscojaUn = new JLabel("* ESCOJA UN VUELO PARA A\u00D1ADIR A SU RESERVA");
-		lblTablaDeVuelos = new JLabel(
-				"TABLA DE VUELOS DISPONIBLES ACTUALMENTE POR LAS COMPA\u00D1\u00CDAS VUELING Y RYANAIR");
-		scrollPaneVuelosReserva = new JScrollPane();
-		tableVuelosReserva = new JTable();
-		btnAadirVueloA = new JButton("A\u00D1ADIR VUELO A LA RESERVA");
+		btnAñadirVueloRyanair = new JButton("A\u00D1ADIR VUELO A LA RESERVA");
 		btnQuitarVueloDe = new JButton("QUITAR VUELO DE MI RESERVA");
 		btnReservarVuelosYa = new JButton("RESERVAR VUELOS YA MISMO");
+		buttonAñadirVueloVueling = new JButton("A\u00D1ADIR VUELO A LA RESERVA");
+		btnQuitarTodosLos = new JButton("QUITAR TODOS LOS VUELOS DE MI RESERVA");
+		btnMostrarMisReservas = new JButton("MOSTRAR MIS RESERVAS HASTA HOY");
+
+		tableVuelosRyanair = new JTable();
+		tableVuelosReserva = new JTable();
+		tableVuelosVueling = new JTable();
+
+		lblEscojaUn = new JLabel("* ESCOJA UN VUELO PARA A\u00D1ADIR A SU RESERVA");
+		lblTablaDeVuelos = new JLabel("TABLA DE VUELOS DISPONIBLES POR RYANAIR");
 		lblEscojaUn_1 = new JLabel("* ESCOJA UN VUELO PARA QUITARLO DE SU RESERVA");
-		scrollPaneVuelos = new JScrollPane();
+		lblTablaConMis = new JLabel("RESERVAS DE VUELOS PENDIENTES DE PAGO");
+		lblTablaDeVuelos_1 = new JLabel("TABLA DE VUELOS DISPONIBLES POR VUELING\r\n");
+		label = new JLabel("* ESCOJA UN VUELO PARA A\u00D1ADIR A SU RESERVA");
+		lblNombreDelUsuario = new JLabel("NOMBRE DEL USUARIO :");
+		lblNombre = new JLabel(ClientFrame.getUser().getNombre());
+		lblFondos = new JLabel("FONDOS :");
+		lblFondosActuales = new JLabel(String.valueOf(ClientFrame.getFondosUsuario()));
+
+		scrollPaneVuelosReserva = new JScrollPane();
+		scrollPaneRyanair = new JScrollPane();
+		scrollPaneVueling = new JScrollPane();
 	}
 
 	private void componentes() {
-		comboBoxOrigen.setBounds(12, 13, 363, 36);
-		comboBoxDestino.setBounds(387, 13, 363, 36);
-		comboBoxNumPlazas.setBounds(762, 13, 260, 36);
-		btnBuscarVuelos.setBounds(1034, 13, 234, 36);
-		scrollPaneVuelos.setBounds(12, 96, 1256, 402);
-		lblEscojaUn.setForeground(Color.RED);
-		lblEscojaUn.setBounds(12, 504, 317, 23);
-		lblTablaDeVuelos.setForeground(Color.GREEN);
-		lblTablaDeVuelos.setBounds(12, 60, 535, 36);
-		scrollPaneVuelosReserva.setBounds(12, 540, 1256, 94);
-		btnAadirVueloA.setBounds(320, 503, 284, 25);
-		lblEscojaUn_1.setForeground(Color.RED);
-		lblEscojaUn_1.setBounds(12, 641, 317, 23);
-		btnQuitarVueloDe.setBounds(341, 640, 284, 25);
-		btnReservarVuelosYa.setForeground(Color.GREEN);
-		btnReservarVuelosYa.setBounds(12, 677, 1256, 30);
+		comboBoxOrigen.setBounds(12, 31, 363, 58);
+		comboBoxOrigen.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "SELECCIONE UN ORIGEN",
+				TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
+
+		comboBoxDestino.setBounds(387, 31, 363, 58);
+		comboBoxDestino.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "SELECCIONE UN DESTINO",
+				TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
+
+		comboBoxNumPlazas.setBounds(762, 31, 260, 58);
+		comboBoxNumPlazas.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"),
+				"SELECCIONE NUM PASAJEROS", TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 0, 0)));
+
+		btnBuscarVuelos.setBounds(1034, 31, 234, 58);
 		btnBuscarVuelos.setFont(new Font("Tahoma", Font.PLAIN, 15));
+
+		scrollPaneRyanair.setBounds(12, 151, 613, 263);
+
+		lblEscojaUn.setForeground(Color.RED);
+		lblEscojaUn.setBounds(12, 417, 301, 43);
+		lblEscojaUn.setHorizontalAlignment(SwingConstants.CENTER);
+
+		lblTablaDeVuelos.setForeground(Color.GREEN);
+		lblTablaDeVuelos.setBounds(12, 102, 613, 36);
+		lblTablaDeVuelos.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTablaDeVuelos.setHorizontalAlignment(SwingConstants.CENTER);
+
+		scrollPaneVuelosReserva.setBounds(12, 506, 1256, 94);
+
+		btnAñadirVueloRyanair.setBounds(315, 417, 310, 43);
+
+		lblEscojaUn_1.setForeground(Color.RED);
+		lblEscojaUn_1.setBounds(12, 603, 325, 43);
+		lblEscojaUn_1.setHorizontalAlignment(SwingConstants.CENTER);
+
+		btnQuitarVueloDe.setBounds(341, 603, 284, 43);
+
+		btnReservarVuelosYa.setForeground(new Color(0, 128, 0));
+		btnReservarVuelosYa.setBounds(984, 603, 284, 43);
+		btnReservarVuelosYa.setFont(new Font("Tahoma", Font.PLAIN, 16));
+
+		lblTablaConMis.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTablaConMis.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTablaConMis.setForeground(Color.GREEN);
+		lblTablaConMis.setBounds(12, 466, 1256, 36);
+
+		scrollPaneVueling.setBounds(637, 152, 631, 262);
+
+		lblTablaDeVuelos_1.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTablaDeVuelos_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblTablaDeVuelos_1.setForeground(Color.GREEN);
+		lblTablaDeVuelos_1.setBounds(639, 102, 629, 36);
+
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setForeground(Color.RED);
+		label.setBounds(637, 417, 317, 43);
+
+		buttonAñadirVueloVueling.setBounds(958, 417, 310, 43);
+
+		btnQuitarTodosLos.setBounds(637, 603, 335, 43);
+
+		lblNombreDelUsuario.setForeground(new Color(255, 140, 0));
+		lblNombreDelUsuario.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblNombreDelUsuario.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNombreDelUsuario.setBounds(12, 659, 228, 48);
+
+		lblNombre.setForeground(new Color(0, 250, 154));
+		lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblNombre.setBounds(252, 659, 285, 48);
+
+		lblFondos.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFondos.setForeground(new Color(255, 140, 0));
+		lblFondos.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblFondos.setBounds(549, 659, 125, 48);
+
+		lblFondosActuales.setHorizontalAlignment(SwingConstants.CENTER);
+		lblFondosActuales.setForeground(new Color(0, 250, 154));
+		lblFondosActuales.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblFondosActuales.setBounds(668, 659, 125, 48);
+
+		btnMostrarMisReservas.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnMostrarMisReservas.setBounds(805, 659, 463, 48);
 	}
 
 	private void añadir() {
@@ -126,17 +222,29 @@ public class PanelUsuario extends JPanel {
 		add(comboBoxDestino);
 		add(comboBoxNumPlazas);
 		add(btnBuscarVuelos);
-		add(scrollPaneVuelos);
+		add(scrollPaneRyanair);
 		add(lblEscojaUn);
 		add(lblTablaDeVuelos);
 		add(scrollPaneVuelosReserva);
-		add(btnAadirVueloA);
+		add(btnAñadirVueloRyanair);
 		add(lblEscojaUn_1);
 		add(btnQuitarVueloDe);
 		add(btnReservarVuelosYa);
+		add(lblTablaConMis);
+		add(scrollPaneVueling);
+		add(lblTablaDeVuelos_1);
+		add(label);
+		add(buttonAñadirVueloVueling);
+		add(btnQuitarTodosLos);
+		add(lblNombreDelUsuario);
+		add(lblNombre);
+		add(lblFondos);
+		add(lblFondosActuales);
+		add(btnMostrarMisReservas);
 
-		scrollPaneVuelos.setViewportView(tableVuelos);
+		scrollPaneRyanair.setViewportView(tableVuelosRyanair);
 		scrollPaneVuelosReserva.setViewportView(tableVuelosReserva);
+		scrollPaneVueling.setViewportView(tableVuelosVueling);
 	}
 
 	private void eventos() {
@@ -150,32 +258,25 @@ public class PanelUsuario extends JPanel {
 				}
 			}
 		});
-		btnAadirVueloA.addActionListener(new ActionListener() {
+		btnAñadirVueloRyanair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Primero tenemos que obtener qué objeto VueloDTO está siendo seleccionado:
-				// Ahora podemos procesarlo para añadirlo a la tabla de abajo:
-				// Añadimos el vuelo si no está ya en la lista:
-				if (VUELOS_RESERVA.isEmpty() == false) {
-					boolean existe = false;
-					for (VueloDTO v : VUELOS_RESERVA) {
-						if (v.getNumVuelo() == VUELOS.get(tableVuelos.getSelectedRow()).getNumVuelo()) {
-							existe = true;
-							break;
-						}
-					}
-					if (existe) {
-						JOptionPane.showMessageDialog(null, "YA TIENES EL VUELO : "
-								+ VUELOS.get(tableVuelos.getSelectedRow()).getNumVuelo() + " EN LA TABLA DE RESERVAS",
-								"ERROR!", JOptionPane.ERROR_MESSAGE);
-					} else {
-						// Podemos guardar el vuelo:
-						anyadirVueloAListaVuelosReserva(VUELOS.get(tableVuelos.getSelectedRow()));
-					}
-				} else {
-					// No hace falta comprobar si existe porque no hay ninguno:
-					// Podemos guardar el vuelo:
-					anyadirVueloAListaVuelosReserva(VUELOS.get(tableVuelos.getSelectedRow()));
+				anyadirVueloAListaVuelosReserva(tableVuelosRyanair);
+			}
+		});
+		buttonAñadirVueloVueling.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				anyadirVueloAListaVuelosReserva(tableVuelosVueling);
+			}
+		});
+		btnQuitarTodosLos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				for (int i = 0; i < tableVuelosReserva.getRowCount(); i++) {
+					quitarVueloDeListaVuelosReserva(VUELOS_RESERVA.get(0));
 				}
+			}
+		});
+		btnMostrarMisReservas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
 		btnQuitarVueloDe.addActionListener(new ActionListener() {
@@ -220,14 +321,24 @@ public class PanelUsuario extends JPanel {
 
 				if (VUELOS.isEmpty() == false) {
 					for (VueloDTO vuelo : VUELOS) {
-						tableModel.addRow(new Object[] { vuelo.getAeropuertoOrigen().getUbicacion(),
-								vuelo.getAeropuertoDestino().getUbicacion(), vuelo.getAeropuertoOrigen().getNombre(),
-								vuelo.getAeropuertoDestino().getNombre(), vuelo.getAerolinea().getNombreAerolinea(),
-								vuelo.getNumVuelo(), vuelo.getAsientosLibres(), vuelo.getHoraSalida(),
-								vuelo.getHoraLlegada() });
+						if (vuelo.getAerolinea().getNombreAerolinea().equalsIgnoreCase("RYANAIR")) {
+							tableModelRyanair.addRow(new Object[] { vuelo.getAeropuertoOrigen().getUbicacion(),
+									vuelo.getAeropuertoDestino().getUbicacion(),
+									vuelo.getAeropuertoOrigen().getNombre(), vuelo.getAeropuertoDestino().getNombre(),
+									vuelo.getAerolinea().getNombreAerolinea(), vuelo.getNumVuelo(),
+									vuelo.getAsientosLibres(), vuelo.getHoraSalida(), vuelo.getHoraLlegada() });
+						} else {
+							tableModelVueling.addRow(new Object[] { vuelo.getAeropuertoOrigen().getUbicacion(),
+									vuelo.getAeropuertoDestino().getUbicacion(),
+									vuelo.getAeropuertoOrigen().getNombre(), vuelo.getAeropuertoDestino().getNombre(),
+									vuelo.getAerolinea().getNombreAerolinea(), vuelo.getNumVuelo(),
+									vuelo.getAsientosLibres(), vuelo.getHoraSalida(), vuelo.getHoraLlegada() });
+						}
 					}
 					// Introducimos el modelo en la tabla:
-					tableVuelos.setModel(tableModel);
+					tableVuelosRyanair.setModel(tableModelRyanair);
+					// Introducimos el modelo en la tabla:
+					tableVuelosVueling.setModel(tableModelVueling);
 				} else {
 					JOptionPane.showMessageDialog(null, "NINGUN VUELO ENCONTRADO", "N/A",
 							JOptionPane.INFORMATION_MESSAGE);
@@ -253,6 +364,39 @@ public class PanelUsuario extends JPanel {
 		this.PASAJEROS.add(pasajeros);
 		// Actualizamos tabla:
 		actualizarTablaVuelosReserva();
+	}
+
+	private void anyadirVueloAListaVuelosReserva(JTable tablaAerolinea) {
+		// Primero tenemos que obtener qué objeto VueloDTO está siendo seleccionado:
+		// Ahora podemos procesarlo para añadirlo a la tabla de abajo:
+		// Añadimos el vuelo si no está ya en la lista:
+		if (VUELOS_RESERVA.isEmpty() == false) {
+			boolean existe = false;
+			for (VueloDTO v : VUELOS_RESERVA) {
+				if (v.getNumVuelo() == VUELOS
+						.get(getIndex((int) tablaAerolinea.getValueAt(tablaAerolinea.getSelectedRow(), 5)))
+						.getNumVuelo()) {
+					existe = true;
+					break;
+				}
+			}
+			if (existe) {
+				JOptionPane.showMessageDialog(null,
+						"YA TIENES EL VUELO : " + VUELOS
+								.get(getIndex((int) tablaAerolinea.getValueAt(tablaAerolinea.getSelectedRow(), 5)))
+								.getNumVuelo() + " EN LA TABLA DE RESERVAS",
+						"ERROR!", JOptionPane.ERROR_MESSAGE);
+			} else {
+				// Podemos guardar el vuelo:
+				anyadirVueloAListaVuelosReserva(
+						VUELOS.get(getIndex((int) tablaAerolinea.getValueAt(tablaAerolinea.getSelectedRow(), 5))));
+			}
+		} else {
+			// No hace falta comprobar si existe porque no hay ninguno:
+			// Podemos guardar el vuelo:
+			anyadirVueloAListaVuelosReserva(
+					VUELOS.get(getIndex((int) tablaAerolinea.getValueAt(tablaAerolinea.getSelectedRow(), 5))));
+		}
 	}
 
 	private void quitarVueloDeListaVuelosReserva(VueloDTO vuelo) {
@@ -293,7 +437,20 @@ public class PanelUsuario extends JPanel {
 
 	private void inicializarTablaModelVuelos() {
 		// Creacion de las columnas de la tabla:
-		this.tableModel = new TableModel();
+		this.tableModelRyanair = new TableModel();
+		// Creacion de las columnas de la tabla:
+		this.tableModelVueling = new TableModel();
+	}
+
+	private int getIndex(int vuelo) {
+		int dev = 0;
+		for (int i = 0; i < VUELOS.size(); i++) {
+			if (VUELOS.get(i).getNumVuelo() == vuelo) {
+				dev = i;
+				break;
+			}
+		}
+		return dev;
 	}
 
 	// Clase interna Para agregar columnas:
@@ -313,5 +470,4 @@ public class PanelUsuario extends JPanel {
 			addColumn("HOLA LLEGADA");
 		}
 	}
-
 }

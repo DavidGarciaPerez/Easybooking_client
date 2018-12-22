@@ -1,8 +1,13 @@
 package clientcontroller;
 
+import java.awt.EventQueue;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import clientgui.ClientFrame;
 import clientremote.RMIServiceLocator;
@@ -18,11 +23,31 @@ public class ClientController {
 	public ClientController(String[] args) throws RemoteException {
 
 		this.rsl = new RMIServiceLocator(args);
-
 		// EDT para ajustar el tema propio al JFrame creado para el cliente:
-		ClientFrame frame = new ClientFrame(525, 325, ClientController.this);
-		frame.setVisible(true);
-		frame.cargarPanelIniciarSesion();
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+						if ("Nimbus".equals(info.getName())) {
+							UIManager.setLookAndFeel(info.getClassName());
+							break;
+						}
+					}
+				} catch (Exception e) {
+					try {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+							| UnsupportedLookAndFeelException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+
+				ClientFrame frame = new ClientFrame(525, 325, ClientController.this);
+				frame.setVisible(true);
+				frame.cargarPanelIniciarSesion();
+			}
+		});
 	}
 
 	public boolean registerUser(String nombre, String email, String sistemaAutentificacion) throws RemoteException {
