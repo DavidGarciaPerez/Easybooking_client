@@ -277,6 +277,12 @@ public class PanelUsuario extends JPanel {
 		});
 		btnMostrarMisReservas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				try {
+					new ReservasFrame(controller.getReservas(ClientFrame.getUser()));
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		btnQuitarVueloDe.addActionListener(new ActionListener() {

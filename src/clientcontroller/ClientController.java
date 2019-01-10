@@ -14,6 +14,7 @@ import clientremote.RMIServiceLocator;
 import data.dto.CreditcardDTO;
 import data.dto.PaypalDTO;
 import data.dto.ReservaDTO;
+import data.dto.UsuarioDTO;
 import data.dto.VueloDTO;
 
 public class ClientController {
@@ -118,6 +119,10 @@ public class ClientController {
 			e.printStackTrace();
 		}
 		return vuelos;
+	}
+
+	public List<ReservaDTO> getReservas(UsuarioDTO usuario) throws RemoteException {
+		return this.rsl.getVueloService().getReservas(usuario);
 	}
 
 	public void exit() {
